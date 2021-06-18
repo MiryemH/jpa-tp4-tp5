@@ -33,7 +33,7 @@ public class Client {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="ID_BANQUE")
     private Banque banque;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinTable(name="CLIENTS_COMPTES",
             joinColumns = @JoinColumn(name="ID_CLIENT", referencedColumnName = "ID_CLI"),
             inverseJoinColumns = @JoinColumn(name="ID_COMPTE", referencedColumnName = "ID_COM"))
@@ -184,5 +184,9 @@ public class Client {
                 ", Né(e) le: " + dateNaissance +
                 ", \n \t \t \t" + adresse +
                 ", \n \t \t \tBanque: " + banque.getNom() +"}";
+    }
+    public void ajouterCompte(Compte compte){
+        this.getMesComptes().add(compte);
+        compte.getClients().add(this);
     }
 }

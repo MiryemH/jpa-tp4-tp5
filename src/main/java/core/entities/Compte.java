@@ -27,7 +27,8 @@ public abstract class  Compte {
     private double solde;
     @OneToMany(mappedBy = "compte", cascade = CascadeType.ALL)
     private Set<Operation> operations = new HashSet<>();
-    @ManyToMany(cascade = CascadeType.ALL)
+    //@ManyToMany(mappedBy="mesComptes")// maitre esclave
+    @ManyToMany
     @JoinTable(name="CLIENTS_COMPTES",
             joinColumns = @JoinColumn(name="ID_COMPTE", referencedColumnName = "ID_COM"),
             inverseJoinColumns = @JoinColumn(name="ID_CLIENT", referencedColumnName = "ID_CLI"))
