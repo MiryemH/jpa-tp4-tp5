@@ -40,14 +40,17 @@ public class TestBanque {
         //Créer un compte
         Compte compteCommun = new LivretA("MJ887898-LIVA",30000,0.3);
         manager.persist(compteCommun);
+        madame.getMesComptes().add(compteCommun);
+        monsieur.getMesComptes().add(compteCommun);
         //madame.setMesComptes(Set.of(compteCommun));
         //monsieur.setMesComptes(Set.of(compteCommun));
-        compteCommun.setClients(Set.of(madame,monsieur));
-
+        //compteCommun.setClients(Set.of(madame,monsieur));
+        System.out.println("--------------------------------- Informations sur le compte commun ---------------");
         System.out.println(compteCommun);
         Set<Client> clientsCompteCommun = compteCommun.getClients();
         if(clientsCompteCommun != null){
-            clientsCompteCommun.stream().forEach(client -> System.out.println(client));
+            System.out.println("\t Clients du compte Commun---------------");
+            clientsCompteCommun.stream().forEach(client -> System.out.println("\t\t"+client));
         }
         else
             System.out.println("Aucun client n'est attaché à ce compte commun");
@@ -68,7 +71,7 @@ public class TestBanque {
         banque.setClients(Set.of(client));
 
         Compte livretA = new LivretA("DX660619-LIVA",15000,0.3);
-        Compte assuranceVie = new AssuranceVie("DX660619-ASSVIE", 25000,0.15,LocalDate.of(2023,12,31));
+        Compte assuranceVie = new AssuranceVie("DX660619-ASSVIE", 1000,0.15,LocalDate.of(2023,12,31));
         manager.persist(livretA);
         manager.persist(assuranceVie);
         client.setMesComptes(Set.of(livretA, assuranceVie));
@@ -103,6 +106,7 @@ public class TestBanque {
         manager.persist(op2);
         Operation op3 = new Operation(LocalDate.of(2021,01,05), 2400, "Pour Salmane & Yasser",assuranceVie);
         manager.persist(op3);
+
         assuranceVie.setOperations(Set.of(op1,op2,op3));
         mesOperations = assuranceVie.getOperations();
         //mettre à jour le solde
@@ -113,18 +117,30 @@ public class TestBanque {
         else
             System.out.println("Aucune opération effectuée sur ce compte");
 
+        // créer une opération de retrait, je suppose que le compte n'accepte pas de découvert
+        Operation opRetrait= new Operation(LocalDate.of(2021,6,12), 1000, "Pour Salmane & Yasser",assuranceVie);
+        if( opRetrait.getMontant() > assuranceVie.getSolde() )
+            System.out.println("Opération de retrait impossible");
+        else{
+            manager.persist(opRetrait);
+            //assuranceVie.getOperations().addAll(Set.of(opRetrait));
+            assuranceVie.setSolde(assuranceVie.getSolde() -  opRetrait.getMontant());
+        }
 
-
-            //Afficher les infos de clients
+        //Afficher les infos de clients
+        System.out.println();
+        System.out.println("--------------------------------- Informations sur le client ayant deux comptes ---------------");
         System.out.println(client);
         Set<Compte> mesComptes = client.getMesComptes();
-        System.out.println("-------------------Comptes de "+ client.getPrenom() + " " + client.getNom() + "----------------------------------------");
+        System.out.println("\t Comptes de "+ client.getPrenom() + " " + client.getNom() + "----------------------------------------");
         if (mesComptes != null) {
             for(Compte compte: mesComptes){
-                System.out.println(compte);
+                System.out.println("\t \t"+compte);
                 Set<Operation> operations = compte.getOperations();
-                if(operations != null)
-                    operations.stream().forEach(operation -> System.out.println(operation));
+                if(operations != null){
+                    System.out.println("\t\t\tOpérations sur le compte N°: "+ compte.getNumero());
+                    operations.stream().forEach(operation -> System.out.println("\t\t\t\t"+operation));
+                }
             }
         }
         else

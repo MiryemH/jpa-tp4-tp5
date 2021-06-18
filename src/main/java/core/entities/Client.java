@@ -182,7 +182,7 @@ public class Client {
                 ", " + prenom +
                 " " + nom.toUpperCase() +
                 ", Né(e) le: " + dateNaissance +
-                ", \n" + adresse +
-                ", \n Banque: " + banque.getNom() +"}";
+                ", \n \t \t \t" + adresse +
+                ", \n \t \t \tBanque: " + banque.getNom() +"}";
     }
 }
